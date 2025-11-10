@@ -1,0 +1,12 @@
+# Environment variables with secrets
+.env
+
+# Generated files
+*.webp
+*.log
+
+# macOS
+.DS_Store
+
+# Tidbyt cache
+.cache/
