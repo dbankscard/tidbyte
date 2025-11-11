@@ -31,10 +31,31 @@ else
 fi
 
 # Validate required environment variables
-if [ -z "$TIDBYT_DEVICE_ID" ] || [ -z "$TIDBYT_API_TOKEN" ] || [ -z "$FINNHUB_API_KEY" ] || [ -z "$STOCK_SYMBOLS" ]; then
+if [ -z "$TIDBYT_DEVICE_ID" ] || [ -z "$TIDBYT_API_TOKEN" ] || [ -z "$FINNHUB_API_KEY" ]; then
     echo "ERROR: Missing required environment variables in .env file"
-    echo "Required: TIDBYT_DEVICE_ID, TIDBYT_API_TOKEN, FINNHUB_API_KEY, STOCK_SYMBOLS"
+    echo "Required: TIDBYT_DEVICE_ID, TIDBYT_API_TOKEN, FINNHUB_API_KEY"
     exit 1
+fi
+
+# Get stock symbols from watchlists.json if it exists, otherwise fall back to .env
+WATCHLISTS_FILE="watchlists.json"
+if [ -f "$WATCHLISTS_FILE" ]; then
+    # Read active watchlist and its tickers from JSON
+    ACTIVE_WATCHLIST=$(python3 -c "import json; data=json.load(open('$WATCHLISTS_FILE')); print(data.get('active', 'main'))")
+    STOCK_SYMBOLS=$(python3 -c "import json; data=json.load(open('$WATCHLISTS_FILE')); print(','.join(data['watchlists'].get('$ACTIVE_WATCHLIST', [])))")
+
+    if [ -z "$STOCK_SYMBOLS" ]; then
+        echo "ERROR: No tickers found in active watchlist '$ACTIVE_WATCHLIST'"
+        exit 1
+    fi
+else
+    # Fall back to .env STOCK_SYMBOLS if watchlists.json doesn't exist
+    if [ -z "$STOCK_SYMBOLS" ]; then
+        echo "ERROR: No stock symbols configured"
+        echo "Either create watchlists.json or set STOCK_SYMBOLS in .env"
+        exit 1
+    fi
+    ACTIVE_WATCHLIST="default"
 fi
 
 # Set default installation ID if not provided
@@ -45,6 +66,7 @@ LOG_FILE="$SCRIPT_DIR/stock_ticker.log"
 
 # Timestamp for logging
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting stock ticker update" >> "$LOG_FILE"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Watchlist: $ACTIVE_WATCHLIST" >> "$LOG_FILE"
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Stocks: $STOCK_SYMBOLS" >> "$LOG_FILE"
 
 # Render the app with latest stock data

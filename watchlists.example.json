@@ -1,0 +1,9 @@
+{
+  "active": "main",
+  "watchlists": {
+    "main": ["AAPL", "GOOGL", "MSFT", "TSLA"],
+    "tech": ["AAPL", "GOOGL", "MSFT", "NVDA", "TSLA", "META"],
+    "crypto": ["IBIT", "COIN", "MSTR"],
+    "personal": ["SPY", "QQQ", "VTI"]
+  }
+}

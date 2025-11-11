@@ -9,6 +9,8 @@ A real-time stock ticker app for Tidbyt that displays current prices and percent
 - 📱 Scrolling display optimized for 64x32 LED matrix
 - ⚡ 1-minute cache for performance
 - 🔄 Automated updates during market hours (optional)
+- 📝 **Multiple watchlists** with interactive management
+- 🎯 **Quick switching** between different stock groups (tech, crypto, etc.)
 
 ## Quick Start
 
@@ -21,8 +23,7 @@ cd tidbyte
 
 ### 2. Set Up Configuration
 
-Copy the example environment file and add your credentials:
-
+**Environment variables:**
 ```bash
 cp .env.example .env
 ```
@@ -31,7 +32,13 @@ Edit `.env` and fill in:
 - `TIDBYT_DEVICE_ID` - Your Tidbyt device ID
 - `TIDBYT_API_TOKEN` - Your Tidbyt API token
 - `FINNHUB_API_KEY` - Your Finnhub API key ([Get one free](https://finnhub.io/))
-- `STOCK_SYMBOLS` - Comma-separated stock symbols (e.g., `AAPL,GOOGL,MSFT`)
+
+**Watchlists:**
+```bash
+cp watchlists.example.json watchlists.json
+```
+
+Edit `watchlists.json` to customize your stock lists (or use the interactive manager below).
 
 ### 3. Test the App
 
@@ -40,6 +47,32 @@ Edit `.env` and fill in:
 ```
 
 Your Tidbyt should now display your stocks!
+
+## Managing Watchlists
+
+Use the interactive menu to manage your stock watchlists:
+
+```bash
+./manage_tickers.sh
+```
+
+**Features:**
+- 📋 View all your watchlists
+- 🔄 Switch between watchlists instantly
+- ➕ Add tickers to any watchlist
+- ➖ Remove tickers from watchlists
+- ✨ Create new watchlists (tech, crypto, personal, etc.)
+- 🗑️ Delete watchlists
+- 🚀 Update Tidbyt immediately with current watchlist
+
+**Example workflow:**
+```bash
+./manage_tickers.sh
+# Select option 2: Switch active watchlist
+# Choose "tech" watchlist
+# Select option 7: Update Tidbyt now
+# Your display now shows tech stocks!
+```
 
 ## Manual Updates
 

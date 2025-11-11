@@ -1,6 +1,9 @@
 # Environment variables with secrets
 .env
 
+# Personal watchlists
+watchlists.json
+
 # Generated files
 *.webp
 *.log
