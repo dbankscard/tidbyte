@@ -61,6 +61,9 @@ fi
 # Set default installation ID if not provided
 INSTALLATION_ID="${INSTALLATION_ID:-stockticker}"
 
+# Set default scroll speed if not provided
+SCROLL_SPEED="${SCROLL_SPEED:-normal}"
+
 # Log file
 LOG_FILE="$SCRIPT_DIR/stock_ticker.log"
 
@@ -68,11 +71,13 @@ LOG_FILE="$SCRIPT_DIR/stock_ticker.log"
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting stock ticker update" >> "$LOG_FILE"
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Watchlist: $ACTIVE_WATCHLIST" >> "$LOG_FILE"
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Stocks: $STOCK_SYMBOLS" >> "$LOG_FILE"
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Scroll Speed: $SCROLL_SPEED" >> "$LOG_FILE"
 
 # Render the app with latest stock data
 if $PIXLET render stock_ticker.star \
     stocks="$STOCK_SYMBOLS" \
     api_key="$FINNHUB_API_KEY" \
+    scroll_speed="$SCROLL_SPEED" \
     -o stock_ticker.webp >> "$LOG_FILE" 2>&1; then
 
     echo "$(date '+%Y-%m-%d %H:%M:%S') - Render successful" >> "$LOG_FILE"

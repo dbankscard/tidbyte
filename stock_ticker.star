@@ -28,6 +28,17 @@ DEMO_DATA = {
     "NVDA": {"price": 495.22, "change": 12.45, "change_pct": 2.58},
 }
 
+def get_scroll_delay(speed):
+    """Convert scroll speed setting to delay in milliseconds."""
+    speed_map = {
+        "very_slow": 200,
+        "slow": 150,
+        "normal": 100,
+        "fast": 75,
+        "very_fast": 50,
+    }
+    return speed_map.get(speed, 100)  # Default to normal
+
 def main(config):
     """Main entry point for the stock ticker app."""
 
@@ -37,6 +48,10 @@ def main(config):
 
     # Get Finnhub API key from config
     api_key = config.get("api_key", "")
+
+    # Get scroll speed from config
+    scroll_speed = config.get("scroll_speed", "normal")
+    delay = get_scroll_delay(scroll_speed)
 
     # Fetch stock data
     stock_data = []
@@ -58,7 +73,7 @@ def main(config):
 
     # Create display
     return render.Root(
-        delay = 100,  # 100ms per frame
+        delay = delay,
         child = render.Column(
             children = [
                 render.Box(
@@ -245,6 +260,35 @@ def get_schema():
                 desc = "Your Finnhub API key for real-time stock data",
                 icon = "key",
                 default = "",
+            ),
+            schema.Dropdown(
+                id = "scroll_speed",
+                name = "Scroll Speed",
+                desc = "How fast stocks scroll on the display",
+                icon = "gauge",
+                default = "normal",
+                options = [
+                    schema.Option(
+                        display = "Very Slow",
+                        value = "very_slow",
+                    ),
+                    schema.Option(
+                        display = "Slow",
+                        value = "slow",
+                    ),
+                    schema.Option(
+                        display = "Normal",
+                        value = "normal",
+                    ),
+                    schema.Option(
+                        display = "Fast",
+                        value = "fast",
+                    ),
+                    schema.Option(
+                        display = "Very Fast",
+                        value = "very_fast",
+                    ),
+                ],
             ),
         ],
     )
