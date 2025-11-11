@@ -12,6 +12,7 @@ A real-time stock ticker app for Tidbyt that displays current prices and percent
 - 📝 **Multiple watchlists** with interactive management
 - 🎯 **Quick switching** between different stock groups (tech, crypto, etc.)
 - ⚡ **Batch operations** - add/remove multiple tickers in one session
+- 🎚️ **Configurable scroll speed** - adjust display speed to your preference
 
 ## Quick Start
 
@@ -135,8 +136,11 @@ See [SETUP_AUTOMATION.md](SETUP_AUTOMATION.md) for instructions on setting up au
 | `TIDBYT_API_TOKEN` | Your Tidbyt API token | `eyJhbG...` |
 | `FINNHUB_API_KEY` | Your Finnhub API key | `d1uo0h9r01...` |
 | `INSTALLATION_ID` | App installation ID | `stockticker` |
+| `SCROLL_SPEED` | Display scroll speed | `normal` (see below) |
 
-**Note:** `STOCK_SYMBOLS` is optional in `.env` - if `watchlists.json` exists, the app will use the active watchlist instead.
+**Notes:**
+- `STOCK_SYMBOLS` is optional in `.env` - if `watchlists.json` exists, the app will use the active watchlist instead
+- `SCROLL_SPEED` defaults to `normal` if not specified
 
 ### Watchlists (`watchlists.json`)
 
@@ -157,6 +161,29 @@ The `watchlists.json` file stores all your watchlists:
 - `watchlists` - All your watchlist groups
 
 **Tip:** Use `./manage_tickers.sh` to manage watchlists interactively instead of editing JSON manually!
+
+### Scroll Speed
+
+Control how fast stocks scroll on your display by setting `SCROLL_SPEED` in your `.env` file:
+
+| Speed | Value | Delay (ms) | Best For |
+|-------|-------|------------|----------|
+| Very Slow | `very_slow` | 200ms | Easy reading, fewer stocks |
+| Slow | `slow` | 150ms | Comfortable reading pace |
+| **Normal** | `normal` | 100ms | **Default - balanced speed** |
+| Fast | `fast` | 75ms | Quick updates, many stocks |
+| Very Fast | `very_fast` | 50ms | Maximum throughput |
+
+**Example:**
+```bash
+# In your .env file
+SCROLL_SPEED=slow
+```
+
+Then update your display:
+```bash
+./update_stocks.sh
+```
 
 ## Files
 
