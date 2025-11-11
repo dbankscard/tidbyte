@@ -7,6 +7,9 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
 
+# Path to pixlet (use full path for cron compatibility)
+PIXLET="/opt/homebrew/bin/pixlet"
+
 # Load environment variables from .env file
 if [ -f .env ]; then
     source .env
@@ -34,7 +37,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Starting stock ticker update" >> "$LOG_FILE
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Stocks: $STOCK_SYMBOLS" >> "$LOG_FILE"
 
 # Render the app with latest stock data
-if pixlet render stock_ticker.star \
+if $PIXLET render stock_ticker.star \
     stocks="$STOCK_SYMBOLS" \
     api_key="$FINNHUB_API_KEY" \
     -o stock_ticker.webp >> "$LOG_FILE" 2>&1; then
@@ -42,7 +45,7 @@ if pixlet render stock_ticker.star \
     echo "$(date '+%Y-%m-%d %H:%M:%S') - Render successful" >> "$LOG_FILE"
 
     # Push to Tidbyt device
-    if pixlet push \
+    if $PIXLET push \
         --api-token "$TIDBYT_API_TOKEN" \
         --installation-id "$INSTALLATION_ID" \
         "$TIDBYT_DEVICE_ID" \
