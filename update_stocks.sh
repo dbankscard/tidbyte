@@ -10,6 +10,17 @@ cd "$SCRIPT_DIR"
 # Path to pixlet (use full path for cron compatibility)
 PIXLET="/opt/homebrew/bin/pixlet"
 
+# Check if pixlet is installed
+if [ ! -f "$PIXLET" ]; then
+    # Try to find pixlet in PATH
+    PIXLET=$(which pixlet 2>/dev/null)
+    if [ -z "$PIXLET" ]; then
+        echo "ERROR: pixlet not found!"
+        echo "Please install pixlet: brew install tidbyt/tidbyt/pixlet"
+        exit 1
+    fi
+fi
+
 # Load environment variables from .env file
 if [ -f .env ]; then
     source .env
