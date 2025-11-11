@@ -244,21 +244,30 @@ add_ticker_menu() {
 
     if [ -n "${watchlist_map[$choice]}" ]; then
         local selected="${watchlist_map[$choice]}"
-        read -p "Enter ticker symbol (e.g., AAPL): " ticker
-        ticker=$(echo "$ticker" | tr '[:lower:]' '[:upper:]')
 
-        if [ -z "$ticker" ]; then
-            echo -e "${RED}No ticker entered${NC}"
-            read -p "Press Enter to continue..."
-            return
-        fi
+        # Loop to add multiple tickers
+        while true; do
+            echo ""
+            echo -e "${CYAN}Current tickers in $selected:${NC} $(get_watchlist_tickers "$selected")"
+            echo ""
+            read -p "Enter ticker symbol (e.g., AAPL) or press Enter to finish: " ticker
 
-        local result=$(add_ticker "$selected" "$ticker")
-        if [ "$result" = "added" ]; then
-            echo -e "${GREEN}Added $ticker to $selected${NC}"
-        else
-            echo -e "${YELLOW}$ticker already exists in $selected${NC}"
-        fi
+            # If empty, exit the loop
+            if [ -z "$ticker" ]; then
+                echo -e "${GREEN}Done adding tickers${NC}"
+                break
+            fi
+
+            ticker=$(echo "$ticker" | tr '[:lower:]' '[:upper:]')
+
+            local result=$(add_ticker "$selected" "$ticker")
+            if [ "$result" = "added" ]; then
+                echo -e "${GREEN}✓ Added $ticker to $selected${NC}"
+            else
+                echo -e "${YELLOW}! $ticker already exists in $selected${NC}"
+            fi
+        done
+
         read -p "Press Enter to continue..."
     else
         echo -e "${RED}Invalid selection${NC}"
@@ -290,21 +299,38 @@ remove_ticker_menu() {
 
     if [ -n "${watchlist_map[$choice]}" ]; then
         local selected="${watchlist_map[$choice]}"
-        read -p "Enter ticker symbol to remove: " ticker
-        ticker=$(echo "$ticker" | tr '[:lower:]' '[:upper:]')
 
-        if [ -z "$ticker" ]; then
-            echo -e "${RED}No ticker entered${NC}"
-            read -p "Press Enter to continue..."
-            return
-        fi
+        # Loop to remove multiple tickers
+        while true; do
+            local current_tickers=$(get_watchlist_tickers "$selected")
 
-        local result=$(remove_ticker "$selected" "$ticker")
-        if [ "$result" = "removed" ]; then
-            echo -e "${GREEN}Removed $ticker from $selected${NC}"
-        else
-            echo -e "${RED}$ticker not found in $selected${NC}"
-        fi
+            if [ -z "$current_tickers" ]; then
+                echo ""
+                echo -e "${YELLOW}No tickers left in $selected${NC}"
+                break
+            fi
+
+            echo ""
+            echo -e "${CYAN}Current tickers in $selected:${NC} $current_tickers"
+            echo ""
+            read -p "Enter ticker symbol to remove or press Enter to finish: " ticker
+
+            # If empty, exit the loop
+            if [ -z "$ticker" ]; then
+                echo -e "${GREEN}Done removing tickers${NC}"
+                break
+            fi
+
+            ticker=$(echo "$ticker" | tr '[:lower:]' '[:upper:]')
+
+            local result=$(remove_ticker "$selected" "$ticker")
+            if [ "$result" = "removed" ]; then
+                echo -e "${GREEN}✓ Removed $ticker from $selected${NC}"
+            else
+                echo -e "${RED}! $ticker not found in $selected${NC}"
+            fi
+        done
+
         read -p "Press Enter to continue..."
     else
         echo -e "${RED}Invalid selection${NC}"
