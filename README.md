@@ -11,6 +11,7 @@ A real-time stock ticker app for Tidbyt that displays current prices and percent
 - 🔄 Automated updates during market hours (optional)
 - 📝 **Multiple watchlists** with interactive management
 - 🎯 **Quick switching** between different stock groups (tech, crypto, etc.)
+- ⚡ **Batch operations** - add/remove multiple tickers in one session
 
 ## Quick Start
 
@@ -59,13 +60,36 @@ Use the interactive menu to manage your stock watchlists:
 **Features:**
 - 📋 View all your watchlists
 - 🔄 Switch between watchlists instantly
-- ➕ Add tickers to any watchlist
-- ➖ Remove tickers from watchlists
+- ➕ Add multiple tickers in one session (loop until done)
+- ➖ Remove multiple tickers in one session (loop until done)
 - ✨ Create new watchlists (tech, crypto, personal, etc.)
 - 🗑️ Delete watchlists
 - 🚀 Update Tidbyt immediately with current watchlist
 
-**Example workflow:**
+**Example workflow - Add multiple stocks:**
+```bash
+./manage_tickers.sh
+
+# Select option 3: Add ticker to watchlist
+# Choose "main" watchlist
+
+Current tickers in main: SPY,AAPL,NVDA
+Enter ticker: TSLA
+✓ Added TSLA to main
+
+Current tickers in main: SPY,AAPL,NVDA,TSLA
+Enter ticker: META
+✓ Added META to main
+
+Current tickers in main: SPY,AAPL,NVDA,TSLA,META
+Enter ticker: [Press Enter to finish]
+Done adding tickers
+
+# Select option 7: Update Tidbyt now
+# Your display now shows all the new stocks!
+```
+
+**Example workflow - Switch watchlists:**
 ```bash
 ./manage_tickers.sh
 # Select option 2: Switch active watchlist
@@ -103,22 +127,46 @@ See [SETUP_AUTOMATION.md](SETUP_AUTOMATION.md) for instructions on setting up au
 
 ## Configuration
 
-All configuration is done via the `.env` file:
+### Environment Variables (`.env` file)
 
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `TIDBYT_DEVICE_ID` | Your Tidbyt device ID | `unequally-sought-completed-snipe-8e1` |
 | `TIDBYT_API_TOKEN` | Your Tidbyt API token | `eyJhbG...` |
 | `FINNHUB_API_KEY` | Your Finnhub API key | `d1uo0h9r01...` |
-| `STOCK_SYMBOLS` | Stocks to track | `AAPL,GOOGL,MSFT,TSLA` |
 | `INSTALLATION_ID` | App installation ID | `stockticker` |
+
+**Note:** `STOCK_SYMBOLS` is optional in `.env` - if `watchlists.json` exists, the app will use the active watchlist instead.
+
+### Watchlists (`watchlists.json`)
+
+The `watchlists.json` file stores all your watchlists:
+
+```json
+{
+  "active": "main",
+  "watchlists": {
+    "main": ["SPY", "AAPL", "NVDA", "MSFT"],
+    "tech": ["AAPL", "GOOGL", "MSFT", "NVDA", "TSLA"],
+    "crypto": ["IBIT", "COIN", "MSTR"]
+  }
+}
+```
+
+- `active` - The currently active watchlist (what shows on your Tidbyt)
+- `watchlists` - All your watchlist groups
+
+**Tip:** Use `./manage_tickers.sh` to manage watchlists interactively instead of editing JSON manually!
 
 ## Files
 
 - `stock_ticker.star` - Tidbyt app source code (Starlark)
 - `update_stocks.sh` - Update script for automation
+- `manage_tickers.sh` - Interactive watchlist manager
 - `.env` - Your configuration (not committed to git)
 - `.env.example` - Configuration template
+- `watchlists.json` - Your personal watchlists (not committed to git)
+- `watchlists.example.json` - Watchlist template
 - `SETUP_AUTOMATION.md` - Automation setup guide
 
 ## Finnhub API Limits
